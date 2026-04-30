@@ -3,148 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Asset Optimizer | JM Global</title>
+    <title>Asset Terminal | JM Global</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --success: #10b981; --bg: #0f172a; --card: #1e293b; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg); color: white; margin: 0; padding: 20px; overflow-x: hidden; }
+        :root { --primary: #2563eb; --success: #10b981; --bg: #020617; --card: #0f172a; --border: #1e293b; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: white; margin: 0; padding: 15px; overflow-x: hidden; }
 
-        /* Header Stats */
-        .engine-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--card); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
-        .stat-label { font-size: 10px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 20px; font-weight: 800; color: #fff; }
+        /* Dashboard Stats */
+        .header-stats { display: flex; gap: 12px; margin-bottom: 20px; }
+        .stat-pill { background: var(--card); flex: 1; padding: 18px; border-radius: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+        .stat-pill::after { content: ''; position: absolute; top: 0; right: 0; width: 40px; height: 40px; background: rgba(37, 99, 235, 0.05); border-radius: 0 0 0 100%; }
+        .s-label { font-size: 9px; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .s-val { font-size: 20px; font-weight: 800; margin-top: 4px; }
 
-        /* The "Machine" Core */
-        .engine-core { background: var(--card); border-radius: 40px; padding: 40px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-bottom: 25px; }
+        /* Main Workspace */
+        .terminal-core { background: var(--card); border-radius: 35px; padding: 25px; border: 1px solid var(--border); margin-bottom: 20px; position: relative; }
         
-        /* Progress Ring */
-        .progress-container { width: 180px; height: 180px; margin: 0 auto 30px; position: relative; display: flex; align-items: center; justify-content: center; }
-        .circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
-        .circle-bg { fill: none; stroke: #0f172a; stroke-width: 10; }
-        .circle-progress { fill: none; stroke: var(--primary); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 0.5s ease; }
+        /* Batch Indicator */
+        .batch-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
+        .batch-title { font-size: 13px; font-weight: 800; color: #94a3b8; }
+        .batch-count { font-size: 16px; font-weight: 800; color: var(--primary); }
+        .progress-track { height: 6px; background: #020617; border-radius: 10px; overflow: hidden; margin-bottom: 25px; }
+        .progress-bar { height: 100%; background: linear-gradient(90deg, var(--primary), #60a5fa); width: 0%; transition: 1s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        /* Product Visualizer */
+        .visualizer { width: 100%; aspect-ratio: 1/1; background: #020617; border-radius: 28px; position: relative; overflow: hidden; border: 1px solid #1e293b; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; }
+        #prod-img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: 0.8s ease; }
+        .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary); box-shadow: 0 0 15px var(--primary); z-index: 10; display: none; }
         
-        .counter-text { position: absolute; font-size: 32px; font-weight: 800; }
-        .counter-sub { position: absolute; bottom: 50px; font-size: 10px; color: #64748b; font-weight: 700; }
+        /* Analysis Text */
+        .analysis-log { position: absolute; bottom: 15px; left: 15px; right: 15px; background: rgba(2, 6, 23, 0.85); backdrop-filter: blur(5px); padding: 12px; border-radius: 15px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--success); border: 1px solid rgba(255,255,255,0.05); }
 
-        /* Dynamic Task Log */
-        .task-log { background: #020617; border-radius: 20px; padding: 15px; height: 100px; overflow-y: hidden; margin-bottom: 30px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--success); text-align: left; }
+        /* Main Button */
+        .btn-optimize { background: linear-gradient(135deg, #2563eb, #1d4ed8); color: white; border: none; width: 100%; padding: 22px; border-radius: 20px; font-size: 17px; font-weight: 800; cursor: pointer; box-shadow: 0 12px 30px rgba(37, 99, 235, 0.3); transition: 0.3s; }
+        .btn-optimize:active { transform: scale(0.97); }
+        .btn-optimize:disabled { opacity: 0.4; filter: grayscale(1); }
 
-        /* Main Action Button */
-        .btn-run { background: linear-gradient(135deg, var(--primary), #1d4ed8); color: white; border: none; width: 100%; padding: 25px; border-radius: 25px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 15px 40px rgba(37, 99, 235, 0.3); transition: 0.3s; }
-        .btn-run:disabled { opacity: 0.5; filter: grayscale(1); }
-
-        /* The Trap Overlay (Custom Pop-up) */
-        #trap-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.98); z-index: 1000; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(10px); }
-        .trap-card { background: white; color: #0f172a; border-radius: 40px; padding: 45px 30px; text-align: center; max-width: 400px; box-shadow: 0 50px 100px rgba(0,0,0,0.5); }
-        .trap-card h2 { font-size: 26px; font-weight: 800; color: #e11d48; margin: 0 0 15px; }
-        .trap-card p { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 25px; }
-        .deficit-box { background: #fff1f2; border: 1px solid #fecdd3; padding: 20px; border-radius: 20px; margin-bottom: 30px; }
-        .deficit-amt { font-size: 32px; font-weight: 800; color: #e11d48; }
-
-        .btn-resolve { background: #0f172a; color: white; text-decoration: none; padding: 20px; border-radius: 20px; display: block; font-weight: 800; font-size: 16px; }
+        /* Combination Task Trap */
+        #combo-trap { display: none; position: fixed; inset: 0; background: rgba(2, 6, 23, 0.98); z-index: 1000; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(12px); }
+        .trap-card { background: white; color: #020617; border-radius: 40px; padding: 40px 25px; text-align: center; max-width: 400px; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        
+        .trap-icon { width: 70px; height: 70px; background: #fff1f2; border-radius: 24px; display: flex; align-items: center; justify-content: center; font-size: 32px; margin: 0 auto 20px; }
+        .deficit-label { font-size: 10px; font-weight: 800; color: #e11d48; text-transform: uppercase; letter-spacing: 1px; }
+        .deficit-value { font-size: 42px; font-weight: 900; color: #e11d48; margin: 10px 0; }
+        .btn-resolve { background: #020617; color: white; width: 100%; padding: 20px; border-radius: 18px; font-weight: 800; border: none; margin-top: 20px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="engine-header">
-        <div>
-            <div class="stat-label">Wallet Balance</div>
-            <div class="stat-value" id="disp-bal">$20.00</div>
+    <div class="header-stats">
+        <div class="stat-pill">
+            <div class="s-label">Wallet Balance</div>
+            <div class="s-val" id="total-bal">$20.00</div>
         </div>
-        <div style="text-align: right;">
-            <div class="stat-label">Session Profit</div>
-            <div class="stat-value" id="disp-prof" style="color: var(--success);">+$0.00</div>
+        <div class="stat-pill">
+            <div class="s-label">Today's Profit</div>
+            <div class="s-val" id="total-prof" style="color: var(--success);">+$0.00</div>
         </div>
     </div>
 
-    <div class="engine-core">
-        <div class="progress-container">
-            <svg class="circle-svg">
-                <circle class="circle-bg" cx="90" cy="90" r="70"></circle>
-                <circle id="bar" class="circle-progress" cx="90" cy="90" r="70"></circle>
-            </svg>
-            <div class="counter-text" id="task-count">0/40</div>
-            <div class="counter-sub">MERCHANT BATCH</div>
+    <div class="terminal-core">
+        <div class="batch-header">
+            <div class="batch-title">OPTIMIZATION QUEUE</div>
+            <div class="batch-count"><span id="curr-task">0</span> / 40</div>
         </div>
+        <div class="progress-track"><div class="progress-bar" id="p-bar"></div></div>
 
-        <div class="task-log" id="logger">
-            > System Ready...<br>
-            > Waiting for Merchant Request...
-        </div>
-
-        <button class="btn-run" id="runBtn" onclick="executeTask()">OPTIMIZE NEXT ASSET</button>
-    </div>
-
-    <div style="text-align: center; font-size: 10px; color: #475569; font-weight: 700; letter-spacing: 1px;">
-        DATA SYNC: LAGOS_NODE_SECURE_04
-    </div>
-
-    <div id="trap-overlay">
-        <div class="trap-card">
-            <div style="font-size: 50px; margin-bottom: 20px;">⚠️</div>
-            <h2>MERCHANT SHORTFALL</h2>
-            <p>You have encountered a <b>High-Value Combination Task</b>. To process this merchant's request, a temporary liquidity shortfall must be cleared.</p>
+        <div class="visualizer">
+            <div class="scan-line" id="scanner"></div>
+            <img src="" id="prod-img">
+            <div id="loading-txt" style="color: #475569; font-weight: 800; font-size: 11px; text-align: center; padding: 20px;">
+                STATION READY<br><span style="font-size: 9px; font-weight: 600; opacity: 0.6;">WAITING FOR NEXT MERCHANT BATCH</span>
+            </div>
             
-            <div class="deficit-box">
-                <div class="stat-label" style="color: #e11d48;">REQUIRED DEPOSIT</div>
-                <div class="deficit-amt">$40.00</div>
-                <div style="font-size: 11px; font-weight: 700; color: #475569; margin-top: 5px;">(₦62,000.00 Estimated)</div>
+            <div class="analysis-log" id="log" style="display: none;">
+                > INITIALIZING NODE...
+            </div>
+        </div>
+
+        <button class="btn-optimize" id="optBtn" onclick="runOptimization()">OPTIMIZE NEXT ASSET</button>
+    </div>
+
+    <div style="text-align: center; font-size: 9px; color: #475569; font-weight: 800; letter-spacing: 1px;">
+        <span style="color: var(--success);">●</span> SECURE DATA SYNC: LAGOS_04_VM
+    </div>
+
+    <div id="combo-trap">
+        <div class="trap-card">
+            <div class="trap-icon">💎</div>
+            <h2 style="font-weight: 900; margin: 0 0 10px;">PREMIUM BATCH</h2>
+            <p style="color: #64748b; font-size: 14px; line-height: 1.5; margin-bottom: 25px;">
+                You have unlocked a <b>Combination Task</b> with 10x commissions. Due to the high asset value, a temporary liquidity balance is required to finalize the optimization.
+            </p>
+            
+            <div style="background: #fff1f2; border: 1.5px dashed #fecdd3; padding: 25px; border-radius: 25px;">
+                <div class="deficit-label">Required To Unlock</div>
+                <div class="deficit-value">$40.00</div>
+                <div style="font-size: 12px; font-weight: 700; color: #475569;">≈ ₦64,500.00 (Market Rate)</div>
             </div>
 
-            <p style="font-size: 12px; font-style: italic;">*Account withdrawal is locked until this batch is finalized.</p>
-            <a href="checkout.html" class="btn-resolve">CLEAR DEFICIT & UNLOCK</a>
+            <button class="btn-resolve" onclick="window.location.href='checkout.html'">CLEAR LIQUIDITY & WITHDRAW</button>
+            <p style="font-size: 10px; color: #94a3b8; margin-top: 15px; font-style: italic;">*Account funds are temporarily locked in the smart contract.</p>
         </div>
     </div>
 
     <script>
-        let balance = 20.00;
-        let profit = 0.00;
+        let bal = 20.00;
+        let prof = 0.00;
         let count = 0;
-        const total = 40;
 
-        function executeTask() {
-            const btn = document.getElementById('runBtn');
-            const logger = document.getElementById('logger');
-            const bar = document.getElementById('bar');
-            
+        function runOptimization() {
+            const btn = document.getElementById('optBtn');
+            const img = document.getElementById('prod-img');
+            const scanner = document.getElementById('scanner');
+            const log = document.getElementById('log');
+            const loader = document.getElementById('loading-txt');
+
             btn.disabled = true;
-            btn.innerText = "PROCESSING DATA...";
+            btn.innerText = "PROCESSING...";
+            loader.style.display = 'none';
+            log.style.display = 'block';
+            log.innerHTML = "> FETCHING ENCRYPTED ASSET...";
             
-            // Random Merchant Names for Realism
-            const merchants = ["Amazon_Global", "Jumia_NG", "Konga_Ltd", "AliExpress_Asia", "eBay_Inc"];
-            const selected = merchants[Math.floor(Math.random() * merchants.length)];
+            // Random High-Quality Image
+            const randomID = Math.floor(Math.random() * 5000);
+            img.src = `https://images.unsplash.com/photo-${1523275335684 + randomID % 1000}-37898b6baf30?auto=format&fit=crop&w=600&q=80`;
+            img.style.opacity = "0.3";
+            scanner.style.display = "block";
             
-            logger.innerHTML += `<br>> Fetching asset from ${selected}...`;
+            // Animation for scan line
+            let pos = 0;
+            const scanInt = setInterval(() => {
+                pos += 5;
+                scanner.style.top = pos + "px";
+                if(pos >= 350) pos = 0;
+            }, 30);
 
             setTimeout(() => {
+                clearInterval(scanInt);
+                scanner.style.display = "none";
+                img.style.opacity = "1";
+                
                 count++;
-                // TRIGGER THE TRAP AT TASK 35
+                
+                // TRIGGER TRAP
                 if(count === 35) {
-                    document.getElementById('trap-overlay').style.display = 'flex';
+                    document.getElementById('combo-trap').style.display = 'flex';
                     return;
                 }
 
-                balance += 4.50;
-                profit += 4.50;
+                // Update Balances
+                bal += 4.50;
+                prof += 4.50;
 
                 // Update UI
-                document.getElementById('disp-bal').innerText = "$" + balance.toFixed(2);
-                document.getElementById('disp-prof').innerText = "+$" + profit.toFixed(2);
-                document.getElementById('task-count').innerText = count + "/" + total;
+                document.getElementById('total-bal').innerText = "$" + bal.toFixed(2);
+                document.getElementById('total-prof').innerText = "+$" + prof.toFixed(2);
+                document.getElementById('curr-task').innerText = count;
+                document.getElementById('p-bar').style.width = (count/40 * 100) + "%";
                 
-                // Update Progress Bar
-                const offset = 440 - (440 * count / total);
-                bar.style.strokeDashoffset = offset;
-
-                logger.innerHTML += `<br>> <span style="color: #fff">SUCCESS:</span> +$4.50 Allocated.`;
-                logger.scrollTop = logger.scrollHeight;
+                log.innerHTML = `> <span style="color:#fff">SUCCESS:</span> Optimized $1,420 Asset<br>> <span style="color:#fff">PROFIT:</span> +$4.50 Credited`;
 
                 btn.disabled = false;
                 btn.innerText = "OPTIMIZE NEXT ASSET";
-            }, 1200);
+            }, 1800);
         }
     </script>
 </body>
 </html>
-
