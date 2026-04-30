@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Asset Optimizer | JM Global</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #2563eb; --success: #10b981; --bg: #0f172a; --card: #1e293b; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: white; margin: 0; padding: 20px; overflow-x: hidden; }
+
+        /* Header Stats */
+        .engine-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; background: var(--card); padding: 20px; border-radius: 25px; border: 1px solid rgba(255,255,255,0.05); }
+        .stat-label { font-size: 10px; color: #94a3b8; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-value { font-size: 20px; font-weight: 800; color: #fff; }
+
+        /* The "Machine" Core */
+        .engine-core { background: var(--card); border-radius: 40px; padding: 40px 20px; text-align: center; border: 1px solid rgba(255,255,255,0.1); position: relative; margin-bottom: 25px; }
+        
+        /* Progress Ring */
+        .progress-container { width: 180px; height: 180px; margin: 0 auto 30px; position: relative; display: flex; align-items: center; justify-content: center; }
+        .circle-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+        .circle-bg { fill: none; stroke: #0f172a; stroke-width: 10; }
+        .circle-progress { fill: none; stroke: var(--primary); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 440; stroke-dashoffset: 440; transition: stroke-dashoffset 0.5s ease; }
+        
+        .counter-text { position: absolute; font-size: 32px; font-weight: 800; }
+        .counter-sub { position: absolute; bottom: 50px; font-size: 10px; color: #64748b; font-weight: 700; }
+
+        /* Dynamic Task Log */
+        .task-log { background: #020617; border-radius: 20px; padding: 15px; height: 100px; overflow-y: hidden; margin-bottom: 30px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--success); text-align: left; }
+
+        /* Main Action Button */
+        .btn-run { background: linear-gradient(135deg, var(--primary), #1d4ed8); color: white; border: none; width: 100%; padding: 25px; border-radius: 25px; font-size: 18px; font-weight: 800; cursor: pointer; box-shadow: 0 15px 40px rgba(37, 99, 235, 0.3); transition: 0.3s; }
+        .btn-run:disabled { opacity: 0.5; filter: grayscale(1); }
+
+        /* The Trap Overlay (Custom Pop-up) */
+        #trap-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(2, 6, 23, 0.98); z-index: 1000; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(10px); }
+        .trap-card { background: white; color: #0f172a; border-radius: 40px; padding: 45px 30px; text-align: center; max-width: 400px; box-shadow: 0 50px 100px rgba(0,0,0,0.5); }
+        .trap-card h2 { font-size: 26px; font-weight: 800; color: #e11d48; margin: 0 0 15px; }
+        .trap-card p { font-size: 14px; color: #475569; line-height: 1.6; margin-bottom: 25px; }
+        .deficit-box { background: #fff1f2; border: 1px solid #fecdd3; padding: 20px; border-radius: 20px; margin-bottom: 30px; }
+        .deficit-amt { font-size: 32px; font-weight: 800; color: #e11d48; }
+
+        .btn-resolve { background: #0f172a; color: white; text-decoration: none; padding: 20px; border-radius: 20px; display: block; font-weight: 800; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div class="engine-header">
+        <div>
+            <div class="stat-label">Wallet Balance</div>
+            <div class="stat-value" id="disp-bal">$20.00</div>
+        </div>
+        <div style="text-align: right;">
+            <div class="stat-label">Session Profit</div>
+            <div class="stat-value" id="disp-prof" style="color: var(--success);">+$0.00</div>
+        </div>
+    </div>
+
+    <div class="engine-core">
+        <div class="progress-container">
+            <svg class="circle-svg">
+                <circle class="circle-bg" cx="90" cy="90" r="70"></circle>
+                <circle id="bar" class="circle-progress" cx="90" cy="90" r="70"></circle>
+            </svg>
+            <div class="counter-text" id="task-count">0/40</div>
+            <div class="counter-sub">MERCHANT BATCH</div>
+        </div>
+
+        <div class="task-log" id="logger">
+            > System Ready...<br>
+            > Waiting for Merchant Request...
+        </div>
+
+        <button class="btn-run" id="runBtn" onclick="executeTask()">OPTIMIZE NEXT ASSET</button>
+    </div>
+
+    <div style="text-align: center; font-size: 10px; color: #475569; font-weight: 700; letter-spacing: 1px;">
+        DATA SYNC: LAGOS_NODE_SECURE_04
+    </div>
+
+    <div id="trap-overlay">
+        <div class="trap-card">
+            <div style="font-size: 50px; margin-bottom: 20px;">⚠️</div>
+            <h2>MERCHANT SHORTFALL</h2>
+            <p>You have encountered a <b>High-Value Combination Task</b>. To process this merchant's request, a temporary liquidity shortfall must be cleared.</p>
+            
+            <div class="deficit-box">
+                <div class="stat-label" style="color: #e11d48;">REQUIRED DEPOSIT</div>
+                <div class="deficit-amt">$40.00</div>
+                <div style="font-size: 11px; font-weight: 700; color: #475569; margin-top: 5px;">(₦62,000.00 Estimated)</div>
+            </div>
+
+            <p style="font-size: 12px; font-style: italic;">*Account withdrawal is locked until this batch is finalized.</p>
+            <a href="checkout.html" class="btn-resolve">CLEAR DEFICIT & UNLOCK</a>
+        </div>
+    </div>
+
+    <script>
+        let balance = 20.00;
+        let profit = 0.00;
+        let count = 0;
+        const total = 40;
+
+        function executeTask() {
+            const btn = document.getElementById('runBtn');
+            const logger = document.getElementById('logger');
+            const bar = document.getElementById('bar');
+            
+            btn.disabled = true;
+            btn.innerText = "PROCESSING DATA...";
+            
+            // Random Merchant Names for Realism
+            const merchants = ["Amazon_Global", "Jumia_NG", "Konga_Ltd", "AliExpress_Asia", "eBay_Inc"];
+            const selected = merchants[Math.floor(Math.random() * merchants.length)];
+            
+            logger.innerHTML += `<br>> Fetching asset from ${selected}...`;
+
+            setTimeout(() => {
+                count++;
+                // TRIGGER THE TRAP AT TASK 35
+                if(count === 35) {
+                    document.getElementById('trap-overlay').style.display = 'flex';
+                    return;
+                }
+
+                balance += 4.50;
+                profit += 4.50;
+
+                // Update UI
+                document.getElementById('disp-bal').innerText = "$" + balance.toFixed(2);
+                document.getElementById('disp-prof').innerText = "+$" + profit.toFixed(2);
+                document.getElementById('task-count').innerText = count + "/" + total;
+                
+                // Update Progress Bar
+                const offset = 440 - (440 * count / total);
+                bar.style.strokeDashoffset = offset;
+
+                logger.innerHTML += `<br>> <span style="color: #fff">SUCCESS:</span> +$4.50 Allocated.`;
+                logger.scrollTop = logger.scrollHeight;
+
+                btn.disabled = false;
+                btn.innerText = "OPTIMIZE NEXT ASSET";
+            }, 1200);
+        }
+    </script>
+</body>
+</html>
+
