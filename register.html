@@ -6,18 +6,20 @@
     <title>Agent Enrollment | JM Global Alliance</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root { --primary: #3b82f6; --bg: #020617; --card: #0f172a; --border: #1e293b; --text-dim: #94a3b8; }
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        :root { --primary: #3b82f6; --bg: #020617; --card: #0f172a; --border: #1e293b; --text-dim: #94a3b8; --success: #22c55e; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: var(--bg); color: #fff; margin: 0; padding: 20px; display: flex; justify-content: center; }
 
-        .form-container { width: 100%; max-width: 480px; background: var(--card); border-radius: 40px; padding: 45px 30px; border: 1px solid var(--border); box-shadow: 0 50px 100px rgba(0,0,0,0.5); margin-top: 20px; }
+        .form-container { width: 100%; max-width: 480px; background: var(--card); border-radius: 40px; padding: 45px 30px; border: 1px solid var(--border); box-shadow: 0 50px 100px rgba(0,0,0,0.5); margin-top: 10px; }
         
-        .form-header { margin-bottom: 40px; }
-        .form-header h1 { font-size: 28px; font-weight: 800; margin: 0; letter-spacing: -1px; }
-        .form-header p { font-size: 14px; color: var(--text-dim); margin-top: 8px; line-height: 1.5; }
+        .form-header { margin-bottom: 35px; }
+        .form-header h1 { font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -1px; }
+        .form-header p { font-size: 13px; color: var(--text-dim); margin-top: 8px; line-height: 1.5; }
 
-        .input-group { margin-bottom: 25px; position: relative; }
-        .input-group label { display: block; font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1.5px; }
+        .bonus-tag { background: rgba(34, 197, 94, 0.1); color: var(--success); padding: 12px; border-radius: 15px; font-size: 12px; font-weight: 800; margin-bottom: 25px; border: 1px solid rgba(34, 197, 94, 0.2); display: flex; align-items: center; gap: 8px; }
+
+        .input-group { margin-bottom: 20px; position: relative; }
+        .input-group label { display: block; font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1.2px; }
         
         input, select {
             width: 100%;
@@ -29,24 +31,15 @@
             font-size: 15px;
             transition: 0.3s;
             outline: none;
+            appearance: none;
         }
 
         input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(59, 130, 246, 0.2); }
 
-        .kyc-badge {
-            background: rgba(59, 130, 246, 0.08);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 20px;
-            border-radius: 20px;
-            margin-bottom: 35px;
-            font-size: 12px;
-            color: #cbd5e1;
-            line-height: 1.6;
-        }
-
-        .checkbox-group { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 35px; cursor: pointer; }
-        .checkbox-group input { width: 22px; height: 22px; margin: 0; cursor: pointer; accent-color: var(--primary); }
-        .checkbox-group label { font-size: 12px; color: var(--text-dim); text-transform: none; letter-spacing: 0; line-height: 1.4; font-weight: 600; }
+        /* The Checkbox Fix */
+        .checkbox-wrapper { display: flex; align-items: flex-start; gap: 15px; margin: 30px 0; cursor: pointer; user-select: none; }
+        .checkbox-wrapper input { width: 24px; height: 24px; min-width: 24px; border-radius: 6px; cursor: pointer; accent-color: var(--primary); }
+        .checkbox-wrapper label { font-size: 12px; color: var(--text-dim); font-weight: 600; line-height: 1.5; cursor: pointer; text-transform: none; letter-spacing: 0; margin: 0; }
 
         .btn-enroll {
             background: linear-gradient(135deg, var(--primary), #1d4ed8);
@@ -62,64 +55,51 @@
             transition: 0.3s;
         }
 
-        .btn-enroll:hover { transform: translateY(-2px); box-shadow: 0 20px 45px rgba(37, 99, 235, 0.4); }
+        .btn-enroll:active { transform: scale(0.98); }
 
-        .secure-lock {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            font-size: 10px;
-            color: #475569;
-            font-weight: 800;
-            margin-top: 30px;
-            letter-spacing: 1.5px;
-        }
+        .secure-lock { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 9px; color: #475569; font-weight: 800; margin-top: 25px; letter-spacing: 1px; }
     </style>
 </head>
 <body>
 
     <div class="form-container">
         <div class="form-header">
-            <h1>Agent Enrollment</h1>
-            <p>Onboard as a verified Merchant Optimization Agent for the West Africa Division.</p>
+            <h1>Agent Onboarding</h1>
+            <p>Complete your profile to activate your merchant optimization terminal.</p>
         </div>
 
-        <div class="kyc-badge">
-            <b style="color: #fff;">🔐 COMPLIANCE PROTOCOL:</b><br>
-            All agents must provide valid payout details. Earnings are processed through automated smart contracts to ensure 100% liquidity security.
-        </div>
-
-        <div class="input-group">
-            <label>Invitation Token</label>
-            <input type="text" id="invite" placeholder="6-Digit Management Code" required>
+        <div class="bonus-tag">
+            <span>🎁</span> SIGN-UP BONUS: $20.00 (₦32,500) READY
         </div>
 
         <div class="input-group">
             <label>Legal Full Name</label>
-            <input type="text" id="fullname" placeholder="John Doe / Jane Smith" required>
+            <input type="text" id="fullname" placeholder="Name as shown on Bank Account" required>
         </div>
 
         <div class="input-group">
-            <label>Preferred Settlement Asset</label>
-            <select id="asset">
-                <option value="USDT">USDT (Tether Stablecoin)</option>
-                <option value="NGN">Nigerian Naira (Bank Transfer)</option>
-                <option value="BTC">Bitcoin (BTC)</option>
+            <label>Payout Method</label>
+            <select id="bank-type">
+                <option value="OPay">OPay / Digital Wallet</option>
+                <option value="PalmPay">PalmPay</option>
+                <option value="Commercial">Commercial Bank (Zenith, GT, etc.)</option>
+                <option value="Crypto">USDT (BEP20)</option>
             </select>
         </div>
 
         <div class="input-group">
-            <label>Withdrawal Address / Account</label>
-            <input type="text" id="address" placeholder="TRC20 Address or NGN Bank Details">
+            <label>Account Number</label>
+            <input type="number" id="acc-num" placeholder="e.g. 7032255361" required>
         </div>
 
-        <div class="checkbox-group" onclick="document.getElementById('terms').click()">
-            <input type="checkbox" id="terms">
-            <label for="terms">I agree to the Agent Service Level Agreement (SLA) and acknowledge that a $20.00 sign-up liquidity bonus will be credited upon activation.</label>
+        <div class="checkbox-wrapper" onclick="document.getElementById('terms').click()">
+            <input type="checkbox" id="terms" onclick="event.stopPropagation()">
+            <label for="terms">
+                I agree to the Merchant Service Agreement and acknowledge that my <b>$20.00 activation bonus</b> will be credited instantly upon portal initialization.
+            </label>
         </div>
 
-        <button class="btn-enroll" onclick="processEnrollment()">VERIFY & INITIALIZE PORTAL</button>
+        <button class="btn-enroll" onclick="processEnrollment()">VERIFY & INITIALIZE</button>
 
         <div class="secure-lock">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
@@ -129,27 +109,30 @@
 
     <script>
         function processEnrollment() {
-            const invite = document.getElementById('invite').value;
             const name = document.getElementById('fullname').value;
+            const acc = document.getElementById('acc-num').value;
             const terms = document.getElementById('terms').checked;
 
-            if(!invite || !name) {
-                alert("ERROR: Missing mandatory enrollment fields.");
+            if(!name || !acc) {
+                alert("REQUIRED: Please provide your legal name and account number.");
                 return;
             }
             if(!terms) {
-                alert("ERROR: You must accept the SLA terms to proceed.");
+                alert("REQUIRED: You must accept the terms to receive your $20 bonus.");
                 return;
             }
 
             const btn = document.querySelector('.btn-enroll');
-            btn.innerHTML = 'VERIFYING DATA...';
+            btn.innerHTML = 'VALIDATING NODE...';
             btn.style.opacity = '0.7';
             btn.disabled = true;
 
+            // Store the name for the portal to use
+            localStorage.setItem('agentName', name);
+
             setTimeout(() => {
                 window.location.href = 'portal.html';
-            }, 2500);
+            }, 2000);
         }
     </script>
 </body>
